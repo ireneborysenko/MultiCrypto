@@ -4,7 +4,7 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context="com.aurora.tcrypto.ui.NetLogActivity">
+        tools:context=".ui.NetLogActivity">
 
     <TextView android:id="@+id/net_log_textview"
             android:layout_width="wrap_content"

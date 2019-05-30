@@ -12,8 +12,8 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -41,17 +41,22 @@ import javax.crypto.NoSuchPaddingException;
 public class MainActivity extends AppCompatActivity {
     private final int CHOOSE_FILE_REQUEST_CODE = 0xff;
 
-    private class MenuItemClickListener implements Toolbar.OnMenuItemClickListener {
-        public boolean onMenuItemClick(MenuItem item) {
-            switch (item.getItemId()) {
-                case R.id.item_action_net_demo:
-                    Intent netDemoLaunchIntent = new Intent(
-                            MainActivity.this, NetLogActivity.class);
-                    startActivity(netDemoLaunchIntent);
-                    return true;
-                default:
-                    return false;
-            }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.item_action_net_demo:
+                Intent netDemoLaunchIntent = new Intent(
+                        MainActivity.this, NetLogActivity.class);
+                startActivity(netDemoLaunchIntent);
+                return true;
+            default:
+                return false;
         }
     }
 
@@ -112,9 +117,6 @@ public class MainActivity extends AppCompatActivity {
 
         this.modulusEditText = (EditText) findViewById(R.id.numberN);
 
-        this.toolbar = (Toolbar) findViewById(R.id.toolbar);
-        this.toolbar.inflateMenu(R.menu.menu_main);
-        this.toolbar.setOnMenuItemClickListener(new MenuItemClickListener());
     }
 
     @Override
@@ -270,5 +272,4 @@ public class MainActivity extends AppCompatActivity {
     private Button setInitButton;
     private Button chooseFileButton;
     private EditText modulusEditText;
-    private Toolbar toolbar;
 }
