@@ -1,6 +1,5 @@
 package com.borysenko.multicrypto.ui;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -10,12 +9,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -38,85 +34,68 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
 public class MainActivity extends AppCompatActivity {
+
     private final int CHOOSE_FILE_REQUEST_CODE = 0xff;
+    private SharedPreferences sPref;
+    private AlertDialog.Builder ad;
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
+    @BindView(R.id.set_init_params_button)
+    Button mSetInitParamsButton;
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.item_action_net_demo:
-                Intent netDemoLaunchIntent = new Intent(
-                        MainActivity.this, NetLogActivity.class);
-                startActivity(netDemoLaunchIntent);
-                return true;
-            default:
-                return false;
-        }
-    }
+    @BindView(R.id.number_of_devices)
+    EditText mNumberOfDevices;
 
-    private class SetInitButtonClickListener implements Button.OnClickListener {
-        public void onClick(View view) {
-            try {
-                MainActivity mainActivity = MainActivity.this;
-                EditText modulusEditText = mainActivity.modulusEditText;
-                int modulus = Integer.valueOf(modulusEditText.getText().toString());
-                GenerateParam.generateInitParameters(modulus);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private class ChooseFileButtonListener implements Button.OnClickListener {
-        public void onClick(View view) {
-            try {
-                Intent chooseFileIntent;
-                PackageManager packageManager = getPackageManager();
-                String mimeType = "*/*";
-
-                do {
-                    chooseFileIntent = new Intent(Intent.ACTION_GET_CONTENT);
-                    chooseFileIntent.addCategory(Intent.CATEGORY_OPENABLE);
-                    chooseFileIntent.setType(mimeType);
-                    if (packageManager.resolveActivity(chooseFileIntent, 0) != null) {
-                        break;
-                    }
-
-                    chooseFileIntent = new Intent("com.sec.android.app.myfiles.PICK_DATA");
-                    chooseFileIntent.putExtra("CONTENT_TYPE", mimeType);
-                } while (false);
-
-                Intent chooserIntent = Intent.createChooser(chooseFileIntent, "Select File");
-                startActivityForResult(chooserIntent, CHOOSE_FILE_REQUEST_CODE);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            } catch (android.content.ActivityNotFoundException e) {
-                Toast.makeText(
-                        getApplicationContext(),
-                        "No file manager found", Toast.LENGTH_LONG).show();
-            }
-        }
-    }
+    @BindView(R.id.choose_file_button)
+    Button mChooseFileButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
+    }
 
-        this.setInitButton = (Button) findViewById(R.id.set_init_button);
-        this.setInitButton.setOnClickListener(new SetInitButtonClickListener());
+    @OnClick(R.id.set_init_params_button)
+    void generateParameters() {
+        try {
+            int modulus = Integer.valueOf(mNumberOfDevices.getText().toString());
+            GenerateParam.generateInitParameters(modulus);
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+        }
+    }
 
-        this.chooseFileButton = (Button) findViewById(R.id.choose_file_button);
-        this.chooseFileButton.setOnClickListener(new ChooseFileButtonListener());
+    @OnClick(R.id.choose_file_button)
+    void chooseFile() {
+        try {
+            Intent chooseFileIntent;
+            PackageManager packageManager = getPackageManager();
+            String mimeType = "*/*";
+            do {
+                chooseFileIntent = new Intent(Intent.ACTION_GET_CONTENT);
+                chooseFileIntent.addCategory(Intent.CATEGORY_OPENABLE);
+                chooseFileIntent.setType(mimeType);
+                if (packageManager.resolveActivity(chooseFileIntent, 0) != null) {
+                    break;
+                }
+                chooseFileIntent = new Intent("com.sec.android.app.myfiles.PICK_DATA");
+                chooseFileIntent.putExtra("CONTENT_TYPE", mimeType);
+            } while (false);
 
-        this.modulusEditText = (EditText) findViewById(R.id.numberN);
-
+            Intent chooserIntent = Intent.createChooser(chooseFileIntent, "Select File");
+            startActivityForResult(chooserIntent, CHOOSE_FILE_REQUEST_CODE);
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+        } catch (android.content.ActivityNotFoundException e) {
+            Toast.makeText(
+                    getApplicationContext(),
+                    "No file manager found", Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override
@@ -125,14 +104,10 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        switch (requestCode) {
-            case CHOOSE_FILE_REQUEST_CODE:
-                Uri filepath = data.getData();
-                File fileName = new File(getRealPathFromURI(filepath));
-                onSelectedFile(fileName.toString());
-                break;
-            default:
-                break;
+        if (requestCode == CHOOSE_FILE_REQUEST_CODE) {
+            Uri filepath = data.getData();
+            File fileName = new File(getRealPathFromURI(filepath));
+            onSelectedFile(fileName.toString());
         }
     }
 
@@ -152,19 +127,16 @@ public class MainActivity extends AppCompatActivity {
 
     private void onSelectedFile(String fileName) {
         try {
-
             showDialog(fileName);
             ad.show();
-        } catch (IOException | NoSuchAlgorithmException | NoSuchPaddingException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
-
         Toast.makeText(getApplicationContext(), fileName, Toast.LENGTH_LONG).show();
     }
 
-    private void showDialog(final String fileName) throws IOException, NoSuchAlgorithmException, NoSuchPaddingException {
+    private void showDialog(final String fileName) throws IOException {
 
-        context = MainActivity.this;
         String title = "Вибір дії";
         String message = "Обрано файл ";
         String button1String = "Зашифрувати";
@@ -172,13 +144,13 @@ public class MainActivity extends AppCompatActivity {
 
         final String fileContent = openFile(fileName);
 
-        ad = new AlertDialog.Builder(context);
+        ad = new AlertDialog.Builder(this);
         ad.setTitle(title);
         ad.setMessage(message);
         ad.setPositiveButton(button1String, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int arg1) {
-                Toast.makeText(context, "файл буде шифруватись", Toast.LENGTH_LONG).show();
-                String encrypted = null;
+                Toast.makeText(MainActivity.this, "файл буде шифруватись", Toast.LENGTH_LONG).show();
+                String encrypted;
 
                 try {
                     String secretKey = GenerateParam.generateSymKey();
@@ -196,8 +168,8 @@ public class MainActivity extends AppCompatActivity {
         });
         ad.setNegativeButton(button2String, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int arg1) {
-                Toast.makeText(context, "файл буде розшифровуватись", Toast.LENGTH_LONG).show();
-                String decrypted = null;
+                Toast.makeText(MainActivity.this, "файл буде розшифровуватись", Toast.LENGTH_LONG).show();
+                String decrypted;
 
                 try {
                     String secretKey = loadSymKey(fileName);
@@ -214,7 +186,7 @@ public class MainActivity extends AppCompatActivity {
         ad.setCancelable(true);
         ad.setOnCancelListener(new DialogInterface.OnCancelListener() {
             public void onCancel(DialogInterface dialog) {
-                Toast.makeText(context, "Вы ничего не выбрали",
+                Toast.makeText(MainActivity.this, "Вы ничего не выбрали",
                         Toast.LENGTH_LONG).show();
             }
         });
@@ -225,14 +197,14 @@ public class MainActivity extends AppCompatActivity {
         inputStream = new FileInputStream(filepath);
         int data = inputStream.read();
         char content;
-        String finalString = "";
+        StringBuilder finalString = new StringBuilder();
         while (data != -1) {
             content = (char) data;
             data = inputStream.read();
-            finalString += content;
+            finalString.append(content);
         }
         inputStream.close();
-        return finalString;
+        return finalString.toString();
     }
 
     private void writeFile(String filePath, String fileContent) {
@@ -261,15 +233,6 @@ public class MainActivity extends AppCompatActivity {
 
     private String loadSymKey(String fileName) {
         sPref = getSharedPreferences("MySymKeys", MODE_PRIVATE);
-        String savedSymKey = sPref.getString(fileName, "");
-        return savedSymKey;
+        return sPref.getString(fileName, "");
     }
-
-    private SharedPreferences sPref;
-    private AlertDialog.Builder ad;
-    private Context context;
-
-    private Button setInitButton;
-    private Button chooseFileButton;
-    private EditText modulusEditText;
 }

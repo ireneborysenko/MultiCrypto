@@ -3,4 +3,7 @@
     <string name="action_settings">Settings</string>
     <string name="action_net_demo">Connection Demo</string>
     <string name="title_activity_net_log">Connection Activity Log</string>
+    <string name="set_init_params">You need to set init parameters.</string>
+    <string name="set_init_param_button">Set init parameters</string>
+    <string name="choose_file_button">Choose File to encrypt</string>
 </resources>
