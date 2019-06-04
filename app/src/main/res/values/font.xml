@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!---->
+    <!--fonts type-->
+    <style name="TextRegular" parent="@android:style/TextAppearance">
+    </style>
+
+    <style name="TextBold" parent="@android:style/TextAppearance">
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TextItalic" parent="@android:style/TextAppearance">
+        <item name="android:textStyle">italic</item>
+    </style>
+
+    <!---->
+    <!--colors for each fonts-->
+    <!--regular-->
+    <style name="TextRegular.MainAppText">
+        <item name="android:textColor">?attr/colorMainAppText</item>
+    </style>
+
+
+    <!--bold-->
+    <style name="TextBold.MainApp">
+        <item name="android:textColor">?attr/colorMainApp</item>
+    </style>
+
+    <style name="TextBold.MainAppText">
+        <item name="android:textColor">?attr/colorMainAppText</item>
+    </style>
+
+    <!---->
+    <!--size for each color-->
+    <!--bold sizes-->
+    <style name="TextBold.MainApp.24">
+        <item name="android:textSize">24sp</item>
+    </style>
+</resources>

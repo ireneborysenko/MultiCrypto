@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="colorMainApp" format="reference"/>
+    <attr name="colorMainAppMiddle" format="reference"/>
+    <attr name="colorMainAppBackground" format="reference" />
+    <attr name="colorMainAppText" format="reference" />
+</resources>
