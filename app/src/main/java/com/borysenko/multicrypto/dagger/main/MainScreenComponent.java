@@ -1,5 +1,6 @@
 package com.borysenko.multicrypto.dagger.main;
 
+import com.borysenko.multicrypto.dagger.ContextModule;
 import com.borysenko.multicrypto.ui.main.MainActivity;
 
 import javax.inject.Singleton;
@@ -13,7 +14,7 @@ import dagger.Component;
  * Time: 19:22
  */
 @Singleton
-@Component(modules = MainScreenModule.class)
+@Component(modules = {ContextModule.class, MainScreenModule.class})
 public interface MainScreenComponent {
-    void inject(MainActivity searchActivity);
+    void inject(MainActivity mainActivity);
 }

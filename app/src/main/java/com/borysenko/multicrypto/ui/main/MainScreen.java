@@ -1,5 +1,8 @@
 package com.borysenko.multicrypto.ui.main;
 
+import android.app.Activity;
+import android.content.Intent;
+
 /**
  * Created by Android Studio.
  * User: Iryna
@@ -14,6 +17,13 @@ public interface MainScreen {
 
     interface Presenter {
 
+        void createFolder();
+
+        void loadFilesToRecycler();
+
+        void chooseFile(Activity activity);
+
+        void moveFileToFolder(Intent data);
     }
 
 }
