@@ -15,4 +15,6 @@
     <string name="add_files">Додати</string>
     <string name="encrypt_file_button">Зашифрувати</string>
     <string name="decrypt_file_button">Розшифрувати</string>
+    <string name="set_connection_button">Встановити зв\'язок</string>
+    <string name="convert_file_button">Преобразовать</string>
 </resources>
