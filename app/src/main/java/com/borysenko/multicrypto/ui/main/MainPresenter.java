@@ -4,16 +4,17 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Environment;
-import android.provider.MediaStore;
-import android.util.Log;
 
 import com.borysenko.multicrypto.adapters.MainRecyclerAdapter;
+import com.borysenko.multicrypto.db.CryptFile;
+import com.borysenko.multicrypto.db.DataBaseCallBack;
+import com.borysenko.multicrypto.db.DbManager;
+import com.borysenko.multicrypto.tools.Extensions;
 
 import java.io.File;
-import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -27,7 +28,7 @@ import static com.borysenko.multicrypto.tools.Constants.MAIN_FOLDER;
  * Date: 04/06/19
  * Time: 19:09
  */
-public class MainPresenter implements MainScreen.Presenter {
+public class MainPresenter implements MainScreen.Presenter, DataBaseCallBack {
 
     private MainScreen.View mView;
 
@@ -35,6 +36,9 @@ public class MainPresenter implements MainScreen.Presenter {
     MainPresenter(MainScreen.View mView) {
         this.mView = mView;
     }
+
+    @Inject
+    DbManager dbManager;
 
     @Inject
     Context mContext;
@@ -48,16 +52,8 @@ public class MainPresenter implements MainScreen.Presenter {
     }
 
     @Override
-    public void loadFilesToRecycler() {
-        ArrayList<String> filesList = new ArrayList<>();
-        File folder = new File(Environment.getExternalStorageDirectory(), MAIN_FOLDER);
-        File[] filesInFolder = folder.listFiles();
-        for (File file : filesInFolder) {
-            if (!file.isDirectory()) {
-                filesList.add(file.getName());
-            }
-        }
-        mView.initRecyclerView(filesList);
+    public void loadFiles() {
+        dbManager.getAllFiles(this);
     }
 
     @Override
@@ -65,7 +61,7 @@ public class MainPresenter implements MainScreen.Presenter {
         try {
             Intent chooseFileIntent;
             PackageManager packageManager = mContext.getPackageManager();
-             String mimeType = "*/*";
+            String mimeType = "*/*";
             do {
                 chooseFileIntent = new Intent(Intent.ACTION_GET_CONTENT);
                 chooseFileIntent.addCategory(Intent.CATEGORY_OPENABLE);
@@ -87,32 +83,28 @@ public class MainPresenter implements MainScreen.Presenter {
     @Override
     public void moveFileToFolder(Intent data) {
         Uri filepath = data.getData();
-        File from = new File(getRealPathFromURI(filepath));
+        File from = new File(Extensions.getRealPathFromURI(mContext, filepath));
         File to =
                 new File(Environment.getExternalStorageDirectory()
                         + "/" + MAIN_FOLDER + "/" + from.getName());
         from.renameTo(to);
-    }
-
-    private String getRealPathFromURI(Uri contentURI) {
-        String result;
-        Cursor cursor = mContext.getContentResolver().query(contentURI, null, null, null, null);
-        if (cursor == null) {
-            result = contentURI.getPath();
-        } else {
-            cursor.moveToFirst();
-            int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
-            result = cursor.getString(idx);
-            cursor.close();
-        }
-        return result;
+        dbManager.insertFile(new CryptFile(from.getName()), this);
     }
 
     @Override
     public void recyclerViewListener(MainRecyclerAdapter mAdapter) {
-        mAdapter.setOnItemClickListener((v, files) -> {
-            Log.e("iiii", files);
-            Log.e("iiii", files);
+        mAdapter.setOnItemClickListener((files) -> {
+
         });
+    }
+
+    @Override
+    public void onUsersLoaded(List<CryptFile> cryptFiles) {
+        mView.initRecyclerView(cryptFiles);
+    }
+
+    @Override
+    public void onUpdateRecyclerView() {
+        loadFiles();
     }
 }

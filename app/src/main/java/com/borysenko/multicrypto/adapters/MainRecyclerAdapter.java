@@ -10,11 +10,13 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.borysenko.multicrypto.R;
+import com.borysenko.multicrypto.db.CryptFile;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
 
 /**
  * Created by Android Studio.
@@ -25,7 +27,7 @@ import butterknife.ButterKnife;
 public class MainRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private static ClickListener clickListener;
-    private static ArrayList<String> mListOfFiles;
+    private static List<CryptFile> mListOfFiles;
 
 //    static class EncryptedViewHolder extends RecyclerView.ViewHolder {
 //
@@ -65,7 +67,7 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         fillDecryptedList(viewHolder, i);
     }
 
-    public MainRecyclerAdapter(ArrayList<String> listOfFiles) {
+    public MainRecyclerAdapter(List<CryptFile> listOfFiles) {
         mListOfFiles = listOfFiles;
     }
 
@@ -83,12 +85,11 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         DecryptedViewHolder decryptedViewHolder = (DecryptedViewHolder) viewHolder;
 
-        String files = mListOfFiles.get(i);
-        assert files != null;
+        CryptFile file = mListOfFiles.get(i);
+        assert file != null;
 
-        decryptedViewHolder.mTitle.setText(files);
-
-        decryptedViewHolder.mEncryptButton.setOnClickListener(view -> clickListener.onItemClick(view, files));
+        decryptedViewHolder.mTitle.setText(file.getFileName());
+        decryptedViewHolder.mEncryptButton.setOnClickListener(view -> clickListener.onItemClick(file));
     }
 
     @Override
@@ -101,7 +102,6 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     public interface ClickListener {
-        void onItemClick(View movieId, String files);
+        void onItemClick(CryptFile files);
     }
 }
-

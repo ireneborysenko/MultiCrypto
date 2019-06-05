@@ -1,5 +1,6 @@
 package com.borysenko.multicrypto.dagger.main;
 
+import com.borysenko.multicrypto.dagger.DbManagerModule;
 import com.borysenko.multicrypto.ui.main.MainScreen;
 
 import dagger.Module;
@@ -11,7 +12,7 @@ import dagger.Provides;
  * Date: 04/06/19
  * Time: 19:29
  */
-@Module
+@Module(includes = DbManagerModule.class)
 public class MainScreenModule {
     private final MainScreen.View mView;
 

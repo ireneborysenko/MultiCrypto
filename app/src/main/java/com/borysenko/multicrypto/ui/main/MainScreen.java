@@ -4,8 +4,9 @@ import android.app.Activity;
 import android.content.Intent;
 
 import com.borysenko.multicrypto.adapters.MainRecyclerAdapter;
+import com.borysenko.multicrypto.db.CryptFile;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Android Studio.
@@ -17,14 +18,14 @@ public interface MainScreen {
 
     interface View {
 
-        void initRecyclerView(ArrayList<String> filesList);
+        void initRecyclerView(List<CryptFile> filesList);
     }
 
     interface Presenter {
 
         void createFolder();
 
-        void loadFilesToRecycler();
+        void loadFiles();
 
         void chooseFile(Activity activity);
 

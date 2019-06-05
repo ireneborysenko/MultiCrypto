@@ -14,8 +14,9 @@ import com.borysenko.multicrypto.adapters.MainRecyclerAdapter;
 import com.borysenko.multicrypto.dagger.ContextModule;
 import com.borysenko.multicrypto.dagger.main.DaggerMainScreenComponent;
 import com.borysenko.multicrypto.dagger.main.MainScreenModule;
+import com.borysenko.multicrypto.db.CryptFile;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -51,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements MainScreen.View{
                 .build().inject(this);
 
         mPresenter.createFolder();
-        mPresenter.loadFilesToRecycler();
+        mPresenter.loadFiles();
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -79,7 +80,7 @@ public class MainActivity extends AppCompatActivity implements MainScreen.View{
     }
 
     @Override
-    public void initRecyclerView(ArrayList<String> filesList) {
+    public void initRecyclerView(List<CryptFile> filesList) {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         final MainRecyclerAdapter mAdapter =
                 new MainRecyclerAdapter(filesList);
