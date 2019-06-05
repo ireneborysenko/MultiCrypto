@@ -13,4 +13,6 @@
     <string name="dialog_decrypt_button">Decrypt</string>
     <string name="my_files">Мои файлы</string>
     <string name="add_files">Додати</string>
+    <string name="encrypt_file_button">Зашифрувати</string>
+    <string name="decrypt_file_button">Розшифрувати</string>
 </resources>

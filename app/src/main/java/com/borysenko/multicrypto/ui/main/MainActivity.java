@@ -6,13 +6,21 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.borysenko.multicrypto.R;
+import com.borysenko.multicrypto.adapters.MainRecyclerAdapter;
 import com.borysenko.multicrypto.dagger.ContextModule;
 import com.borysenko.multicrypto.dagger.main.DaggerMainScreenComponent;
 import com.borysenko.multicrypto.dagger.main.MainScreenModule;
 
+import java.util.ArrayList;
+
 import javax.inject.Inject;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 import static com.borysenko.multicrypto.tools.Constants.CHOOSE_FILE_REQUEST_CODE;
 
@@ -27,10 +35,15 @@ public class MainActivity extends AppCompatActivity implements MainScreen.View{
     @Inject
     MainPresenter mPresenter;
 
+    @BindView(R.id.encrypted_recycler_view)
+    RecyclerView mRecyclerView;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        ButterKnife.bind(this);
 
         DaggerMainScreenComponent.builder()
                 .mainScreenModule(new MainScreenModule(this))
@@ -63,5 +76,14 @@ public class MainActivity extends AppCompatActivity implements MainScreen.View{
         if (requestCode == CHOOSE_FILE_REQUEST_CODE) {
             mPresenter.moveFileToFolder(data);
         }
+    }
+
+    @Override
+    public void initRecyclerView(ArrayList<String> filesList) {
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        final MainRecyclerAdapter mAdapter =
+                new MainRecyclerAdapter(filesList);
+        mRecyclerView.setAdapter(mAdapter);
+        mPresenter.recyclerViewListener(mAdapter);
     }
 }

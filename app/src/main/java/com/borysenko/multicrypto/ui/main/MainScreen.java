@@ -3,6 +3,10 @@ package com.borysenko.multicrypto.ui.main;
 import android.app.Activity;
 import android.content.Intent;
 
+import com.borysenko.multicrypto.adapters.MainRecyclerAdapter;
+
+import java.util.ArrayList;
+
 /**
  * Created by Android Studio.
  * User: Iryna
@@ -13,6 +17,7 @@ public interface MainScreen {
 
     interface View {
 
+        void initRecyclerView(ArrayList<String> filesList);
     }
 
     interface Presenter {
@@ -24,6 +29,8 @@ public interface MainScreen {
         void chooseFile(Activity activity);
 
         void moveFileToFolder(Intent data);
+
+        void recyclerViewListener(MainRecyclerAdapter mAdapter);
     }
 
 }

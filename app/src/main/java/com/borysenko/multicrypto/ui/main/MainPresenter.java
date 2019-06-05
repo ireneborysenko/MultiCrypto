@@ -8,6 +8,9 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Log;
+
+import com.borysenko.multicrypto.adapters.MainRecyclerAdapter;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -54,6 +57,7 @@ public class MainPresenter implements MainScreen.Presenter {
                 filesList.add(file.getName());
             }
         }
+        mView.initRecyclerView(filesList);
     }
 
     @Override
@@ -102,5 +106,13 @@ public class MainPresenter implements MainScreen.Presenter {
             cursor.close();
         }
         return result;
+    }
+
+    @Override
+    public void recyclerViewListener(MainRecyclerAdapter mAdapter) {
+        mAdapter.setOnItemClickListener((v, files) -> {
+            Log.e("iiii", files);
+            Log.e("iiii", files);
+        });
     }
 }

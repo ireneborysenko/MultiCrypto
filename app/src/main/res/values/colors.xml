@@ -4,4 +4,6 @@
     <color name="colorMainAppMiddle">#FF6141</color>
     <color name="colorMainAppBackground">#FFEAE6</color>
     <color name="colorMainAppText">#545455</color>
+
+    <color name="colorLightGrey">#AFAFB6</color>
 </resources>
