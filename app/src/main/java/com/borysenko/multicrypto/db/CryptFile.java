@@ -4,6 +4,8 @@ import androidx.room.Entity;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
+import static com.borysenko.multicrypto.tools.Constants.DECRYPTED_FILE;
+
 /**
  * Created by Android Studio.
  * User: Iryna
@@ -17,36 +19,37 @@ public class CryptFile {
     private int id;
 
     private String fileName;
-    private Boolean isEncrypted;
+    private int encryptionType;
+
 //    private ArrayList<String> usersArray;
 //    private ArrayList<String> historyDates;
 
     public CryptFile(String fileName) {
         this.fileName = fileName;
-        this.isEncrypted = false;
+        this.encryptionType = DECRYPTED_FILE;
     }
 
     public int getId() {
         return id;
     }
 
-    public String getFileName() {
-        return fileName;
-    }
-
-    public Boolean getEncrypted() {
-        return isEncrypted;
-    }
-
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getFileName() {
+        return fileName;
     }
 
     public void setFileName(String fileName) {
         this.fileName = fileName;
     }
 
-    public void setEncrypted(Boolean encrypted) {
-        isEncrypted = encrypted;
+    public int getEncryptionType() {
+        return encryptionType;
+    }
+
+    public void setEncryptionType(int encryptionType) {
+        this.encryptionType = encryptionType;
     }
 }

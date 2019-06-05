@@ -20,6 +20,10 @@
         <item name="android:textColor">?attr/colorMainAppText</item>
     </style>
 
+    <style name="TextRegular.MainAppBackground">
+        <item name="android:textColor">?attr/colorMainAppBackground</item>
+    </style>
+
 
     <!--bold-->
     <style name="TextBold.MainApp">
@@ -32,6 +36,14 @@
 
     <style name="TextBold.MainAppText">
         <item name="android:textColor">?attr/colorMainAppText</item>
+    </style>
+
+    <style name="TextBold.DecryptedColor">
+        <item name="android:textColor">?attr/colorDecrypted</item>
+    </style>
+
+    <style name="TextBold.EncryptedColor">
+        <item name="android:textColor">?attr/colorEncrypted</item>
     </style>
 
     <!---->
@@ -51,5 +63,17 @@
 
     <style name="TextBold.MainAppMiddle.16">
         <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="TextBold.DecryptedColor.16">
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="TextBold.EncryptedColor.16">
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="TextRegular.MainAppBackground.12">
+        <item name="android:textSize">12sp</item>
     </style>
 </resources>

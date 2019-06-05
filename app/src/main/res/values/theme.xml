@@ -13,6 +13,8 @@
         <item name="colorMainAppMiddle">@color/colorMainAppMiddle</item>
         <item name="colorMainAppBackground">@color/colorMainAppBackground</item>
         <item name="colorMainAppText">@color/colorMainAppText</item>
+        <item name="colorDecrypted">@color/colorDecrypted</item>
+        <item name="colorEncrypted">@color/colorEncrypted</item>
     </style>
 
 </resources>

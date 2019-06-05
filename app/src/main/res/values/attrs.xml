@@ -4,4 +4,6 @@
     <attr name="colorMainAppMiddle" format="reference"/>
     <attr name="colorMainAppBackground" format="reference" />
     <attr name="colorMainAppText" format="reference" />
+    <attr name="colorDecrypted" format="reference" />
+    <attr name="colorEncrypted" format="reference" />
 </resources>

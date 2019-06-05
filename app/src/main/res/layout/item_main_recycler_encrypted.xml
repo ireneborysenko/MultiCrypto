@@ -7,7 +7,7 @@
 
     <TextView
         android:id="@+id/file_title"
-        style="@style/TextBold.MainAppMiddle.16"
+        style="@style/TextBold.EncryptedColor.16"
         android:layout_width="0dp"
         android:layout_height="30dp"
         android:gravity="center"
@@ -37,15 +37,19 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.65" />
+        app:layout_constraintGuide_percent="0.6" />
 
     <Button
         android:id="@+id/decrypt_button"
-        android:layout_width="wrap_content"
+        style="@style/TextRegular.MainAppBackground.12"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="@string/decrypt_file_button"
         android:layout_margin="@dimen/margin_10dp"
+        android:background="@drawable/bg_encrypted"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintWidth_percent="0.35"
         app:layout_constraintStart_toEndOf="@+id/guideline"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>
