@@ -1,5 +1,6 @@
 package com.borysenko.multicrypto.dagger.file;
 
+import com.borysenko.multicrypto.dagger.ContextModule;
 import com.borysenko.multicrypto.ui.file.FileActivity;
 
 import javax.inject.Singleton;
@@ -13,7 +14,7 @@ import dagger.Component;
  * Time: 22:48
  */
 @Singleton
-@Component(modules = FileScreenModule.class)
+@Component(modules = {ContextModule.class, FileScreenModule.class})
 public interface FileScreenComponent {
     void inject(FileActivity fileActivity);
 }

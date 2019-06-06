@@ -94,7 +94,7 @@ public class MainPresenter implements MainScreen.Presenter, DataBaseCallBack {
     @Override
     public void recyclerViewListener(MainRecyclerAdapter mAdapter) {
         mAdapter.setOnItemClickListener((files) -> {
-
+            mView.openFileActivity(files);
         });
     }
 

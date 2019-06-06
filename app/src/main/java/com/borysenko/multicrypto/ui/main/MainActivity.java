@@ -15,6 +15,7 @@ import com.borysenko.multicrypto.dagger.ContextModule;
 import com.borysenko.multicrypto.dagger.main.DaggerMainScreenComponent;
 import com.borysenko.multicrypto.dagger.main.MainScreenModule;
 import com.borysenko.multicrypto.db.CryptFile;
+import com.borysenko.multicrypto.ui.file.FileActivity;
 
 import java.util.List;
 
@@ -86,5 +87,12 @@ public class MainActivity extends AppCompatActivity implements MainScreen.View{
                 new MainRecyclerAdapter(filesList);
         mRecyclerView.setAdapter(mAdapter);
         mPresenter.recyclerViewListener(mAdapter);
+    }
+
+    @Override
+    public void openFileActivity(CryptFile file) {
+        Intent intent = new Intent(this, FileActivity.class);
+        intent.putExtra("fileObject", file);
+        startActivity(intent);
     }
 }

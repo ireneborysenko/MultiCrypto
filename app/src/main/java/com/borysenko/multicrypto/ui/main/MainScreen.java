@@ -19,6 +19,8 @@ public interface MainScreen {
     interface View {
 
         void initRecyclerView(List<CryptFile> filesList);
+
+        void openFileActivity(CryptFile files);
     }
 
     interface Presenter {

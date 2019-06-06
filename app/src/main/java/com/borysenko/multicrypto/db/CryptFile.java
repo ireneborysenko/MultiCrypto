@@ -4,6 +4,8 @@ import androidx.room.Entity;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
+import java.io.Serializable;
+
 import static com.borysenko.multicrypto.tools.Constants.DECRYPTED_FILE;
 
 /**
@@ -13,7 +15,7 @@ import static com.borysenko.multicrypto.tools.Constants.DECRYPTED_FILE;
  * Time: 16:04
  */
 @Entity(indices={@Index(value="fileName", unique=true)})
-public class CryptFile {
+public class CryptFile implements Serializable {
 
     @PrimaryKey(autoGenerate = true)
     private int id;
