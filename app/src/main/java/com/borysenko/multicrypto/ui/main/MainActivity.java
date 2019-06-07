@@ -15,6 +15,7 @@ import com.borysenko.multicrypto.dagger.ContextModule;
 import com.borysenko.multicrypto.dagger.main.DaggerMainScreenComponent;
 import com.borysenko.multicrypto.dagger.main.MainScreenModule;
 import com.borysenko.multicrypto.db.CryptFile;
+import com.borysenko.multicrypto.ui.detection.DetectionActivity;
 import com.borysenko.multicrypto.ui.file.FileActivity;
 
 import java.util.List;
@@ -63,11 +64,20 @@ public class MainActivity extends AppCompatActivity implements MainScreen.View{
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.choose_files) {
-            mPresenter.chooseFile(this);
-            return true;
+        switch (item.getItemId()) {
+            case R.id.choose_files:
+                mPresenter.chooseFile(this);
+                break;
+            case R.id.detection:
+                openDetectionActivity();
+                break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void openDetectionActivity() {
+        Intent intent = new Intent(this, DetectionActivity.class);
+        startActivity(intent);
     }
 
     @Override
