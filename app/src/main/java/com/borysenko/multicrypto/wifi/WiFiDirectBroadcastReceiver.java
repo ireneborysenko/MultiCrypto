@@ -5,10 +5,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.NetworkInfo;
 import android.net.wifi.p2p.WifiP2pManager;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.borysenko.multicrypto.ui.file.FilePresenter;
+
+import static com.borysenko.multicrypto.tools.Constants.FILE_PRESENTER;
 
 /**
  * Created by Android Studio.
@@ -20,13 +21,15 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
 
     private WifiP2pManager mManager;
     private WifiP2pManager.Channel mChannel;
-    private FilePresenter mActivity;
+    private Object mListenerFile;
+    private int mFilePresenter;
 
     public WiFiDirectBroadcastReceiver(WifiP2pManager mManager, WifiP2pManager.Channel mChannel,
-                                       FilePresenter mActivity) {
+                                       Object mListenerFile, int mFilePresenter) {
         this.mManager = mManager;
         this.mChannel = mChannel;
-        this.mActivity = mActivity;
+        this.mListenerFile = mListenerFile;
+        this.mFilePresenter = mFilePresenter;
     }
 
     @Override
@@ -43,9 +46,10 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
                 Toast.makeText(context, "Wifi is Off", Toast.LENGTH_SHORT).show();
             }
         } else if (WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action)) {
-            Log.e("myList", "No");
             if (mManager!=null) {
-                mManager.requestPeers(mChannel, mActivity.peerListListener);
+
+                if (mFilePresenter == FILE_PRESENTER)
+                    mManager.requestPeers(mChannel, ((FilePresenter)mListenerFile).peerListListener);
             }
 
         } else if (WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)) {
@@ -55,7 +59,8 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
             NetworkInfo networkInfo = intent.getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
 
             if (networkInfo.isConnected()) {
-                mManager.requestConnectionInfo(mChannel, mActivity.connectionInfoListener);
+                if (mFilePresenter == FILE_PRESENTER)
+                    mManager.requestConnectionInfo(mChannel, ((FilePresenter)mListenerFile).connectionInfoListener);
             } else {
                 Toast.makeText(context, "Device Disconnected", Toast.LENGTH_SHORT).show();
             }
@@ -63,6 +68,5 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
         } else if (WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION.equals(action)) {
 
         }
-
     }
 }
