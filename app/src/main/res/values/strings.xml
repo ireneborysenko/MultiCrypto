@@ -17,4 +17,5 @@
     <string name="decrypt_file_button">Розшифрувати</string>
     <string name="set_connection_button">Встановити зв\'язок</string>
     <string name="convert_file_button">Преобразовать</string>
+    <string name="send_text">Надіслати</string>
 </resources>

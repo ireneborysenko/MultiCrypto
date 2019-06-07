@@ -3,7 +3,6 @@ package com.borysenko.multicrypto.ui.file;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -42,14 +41,8 @@ public class FileActivity extends AppCompatActivity implements FileScreen.View{
     @BindView(R.id.file_history)
     TextView mFileHistory;
 
-    @BindView(R.id.set_connection_button)
-    Button mConnectionButton;
-
-    @BindView(R.id.connected_devices_recycler)
+    @BindView(R.id.found_devices_recycler)
     ListView mDevicesListView;
-
-    @BindView(R.id.encryption_button)
-    Button mEncryptionButton;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -87,9 +80,9 @@ public class FileActivity extends AppCompatActivity implements FileScreen.View{
         mPresenter.disableReceiver();
     }
 
-    @OnClick(R.id.set_connection_button)
-    void setConnectionButton() {
-        mPresenter.setConnectionBetweenDevices();
+    @OnClick(R.id.begin_detection_button)
+    void beginDetectionButton() {
+        mPresenter.beginDeviceDetectionButton();
     }
 
     @Override
@@ -103,8 +96,11 @@ public class FileActivity extends AppCompatActivity implements FileScreen.View{
         return mDevicesListView;
     }
 
-    @OnClick(R.id.encryption_button)
-    void encryptionButtonClicked() {
-        mPresenter.sendButton();
+    @OnClick(R.id.connect_button)
+    void connectButtonClicked() {
+        mPresenter.connectButton();
     }
+
+    @OnClick(R.id.send_button)
+    void sendButtonClicked() {mPresenter.sendButton();}
 }

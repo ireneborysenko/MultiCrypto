@@ -21,13 +21,15 @@ public interface FileScreen {
 
         void initWifi(FileActivity activity);
 
-        void setConnectionBetweenDevices();
+        void beginDeviceDetectionButton();
 
         void enableReceiver();
 
         void disableReceiver();
 
         void sendButton();
+
+        void connectButton();
     }
 
 }

@@ -11,6 +11,7 @@ import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Handler;
 import android.os.Message;
+import android.util.SparseBooleanArray;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -63,6 +64,8 @@ public class FilePresenter implements FileScreen.Presenter, DataBaseCallBack {
     private ClientClass clientClass;
     private SendReceive sendReceive;
 
+    ArrayAdapter<String> peersAdapter;
+
     @Inject
     DbManager dbManager;
 
@@ -91,29 +94,10 @@ public class FilePresenter implements FileScreen.Presenter, DataBaseCallBack {
 
         if (!wifiManager.isWifiEnabled())
             wifiManager.setWifiEnabled(true);
-
-        mDevicesListView.setOnItemClickListener((adapterView, view, i, l) -> {
-            final WifiP2pDevice device = deviceArray[i];
-            WifiP2pConfig config = new WifiP2pConfig();
-            config.deviceAddress = device.deviceAddress;
-
-            mManager.connect(mChannel, config, new WifiP2pManager.ActionListener() {
-                @Override
-                public void onSuccess() {
-                    Toast.makeText(mContext, "connected to " + device.deviceName, Toast.LENGTH_SHORT).show();
-                }
-
-                @Override
-                public void onFailure(int i) {
-                    Toast.makeText(mContext, "Not Connected", Toast.LENGTH_SHORT).show();
-                }
-            });
-        });
-
     }
 
     @Override
-    public void setConnectionBetweenDevices() {
+    public void beginDeviceDetectionButton() {
         mManager.discoverPeers(mChannel, new WifiP2pManager.ActionListener() {
             @Override
             public void onSuccess() {
@@ -143,6 +127,37 @@ public class FilePresenter implements FileScreen.Presenter, DataBaseCallBack {
         sendReceive.write(str.getBytes());
     }
 
+    @Override
+    public void connectButton() {
+        SparseBooleanArray checked = mDevicesListView.getCheckedItemPositions();
+        List<WifiP2pDevice> checkedDeviceArray = new ArrayList<>();
+
+        for (int i = 0; i < checked.size(); i++) {
+            checkedDeviceArray.add(deviceArray[checked.keyAt(i)]);
+        }
+
+        for (WifiP2pDevice device: checkedDeviceArray) {
+            connectToDevice(device);
+        }
+    }
+
+    private void connectToDevice(WifiP2pDevice device) {
+        WifiP2pConfig config = new WifiP2pConfig();
+        config.deviceAddress = device.deviceAddress;
+
+        mManager.connect(mChannel, config, new WifiP2pManager.ActionListener() {
+            @Override
+            public void onSuccess() {
+                Toast.makeText(mContext, "connected to " + device.deviceName, Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(int i) {
+                Toast.makeText(mContext, "Not Connected", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
     public WifiP2pManager.PeerListListener peerListListener = new WifiP2pManager.PeerListListener() {
 
         @Override
@@ -163,10 +178,9 @@ public class FilePresenter implements FileScreen.Presenter, DataBaseCallBack {
                     index++;
                 }
 
-                ArrayAdapter<String> peersAdapter = new ArrayAdapter<>(mContext, android.R.layout.simple_list_item_multiple_choice, deviceNameArray);
+                peersAdapter = new ArrayAdapter<>(mContext, android.R.layout.simple_list_item_multiple_choice, deviceNameArray);
                 mDevicesListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
                 mDevicesListView.setAdapter(peersAdapter);
-
 
                 if (peers.size() == 0) {
                     mView.setConnectionNotification("No data found");
