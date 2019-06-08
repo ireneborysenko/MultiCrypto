@@ -65,7 +65,7 @@ public class FileActivity extends AppCompatActivity implements FileScreen.View{
             mFileHistory.setVisibility(View.GONE);
         }
 
-        mPresenter.initWifi(this);
+        mPresenter.initWifi();
     }
 
     @Override

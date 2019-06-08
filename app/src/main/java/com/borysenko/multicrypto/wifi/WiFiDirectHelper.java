@@ -11,8 +11,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.widget.Toast;
 
-import com.borysenko.multicrypto.ui.file.FilePresenter;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -46,14 +44,14 @@ public class WiFiDirectHelper {
         this.mContext = mContext;
     }
 
-    public void initWiFiDirect(FilePresenter listenerFile, int filePresenter) {
+    public void initWiFiDirect(Object listenerFile, int presenterType) {
 
         WifiManager wifiManager = (WifiManager) mContext.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
 
         mManager = (WifiP2pManager) mContext.getSystemService(Context.WIFI_P2P_SERVICE);
         mChannel = mManager.initialize(mContext, getMainLooper(), null);
 
-        mReceiver = new WiFiDirectBroadcastReceiver(mManager, mChannel, listenerFile, filePresenter);
+        mReceiver = new WiFiDirectBroadcastReceiver(mManager, mChannel, listenerFile, presenterType);
         mIntentFiler = new IntentFilter();
         mIntentFiler.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
         mIntentFiler.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);

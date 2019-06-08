@@ -7,8 +7,10 @@ import android.net.NetworkInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.widget.Toast;
 
+import com.borysenko.multicrypto.ui.detection.DetectionPresenter;
 import com.borysenko.multicrypto.ui.file.FilePresenter;
 
+import static com.borysenko.multicrypto.tools.Constants.DETECTION_PRESENTER;
 import static com.borysenko.multicrypto.tools.Constants.FILE_PRESENTER;
 
 /**
@@ -22,14 +24,14 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
     private WifiP2pManager mManager;
     private WifiP2pManager.Channel mChannel;
     private Object mListenerFile;
-    private int mFilePresenter;
+    private int mPresenterType;
 
     public WiFiDirectBroadcastReceiver(WifiP2pManager mManager, WifiP2pManager.Channel mChannel,
-                                       Object mListenerFile, int mFilePresenter) {
+                                       Object mListenerFile, int mPresenterType) {
         this.mManager = mManager;
         this.mChannel = mChannel;
         this.mListenerFile = mListenerFile;
-        this.mFilePresenter = mFilePresenter;
+        this.mPresenterType = mPresenterType;
     }
 
     @Override
@@ -48,8 +50,10 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
         } else if (WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action)) {
             if (mManager!=null) {
 
-                if (mFilePresenter == FILE_PRESENTER)
+                if (mPresenterType == FILE_PRESENTER)
                     mManager.requestPeers(mChannel, ((FilePresenter)mListenerFile).peerListListener);
+                else if (mPresenterType == DETECTION_PRESENTER)
+                    mManager.requestPeers(mChannel, ((DetectionPresenter)mListenerFile).peerListListener);
             }
 
         } else if (WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)) {
@@ -59,8 +63,10 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
             NetworkInfo networkInfo = intent.getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
 
             if (networkInfo.isConnected()) {
-                if (mFilePresenter == FILE_PRESENTER)
+                if (mPresenterType == FILE_PRESENTER)
                     mManager.requestConnectionInfo(mChannel, ((FilePresenter)mListenerFile).connectionInfoListener);
+                else if (mPresenterType == DETECTION_PRESENTER)
+                    mManager.requestConnectionInfo(mChannel, ((DetectionPresenter)mListenerFile).connectionInfoListener);
             } else {
                 Toast.makeText(context, "Device Disconnected", Toast.LENGTH_SHORT).show();
             }

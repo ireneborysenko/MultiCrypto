@@ -52,7 +52,7 @@ public class FilePresenter implements FileScreen.Presenter, DataBaseCallBack {
     }
 
     @Override
-    public void initWifi(FileActivity activity) {
+    public void initWifi() {
         mDevicesListView = mView.getDevicesListView();
 
         wiFiDirectHelper = new WiFiDirectHelper(mContext);

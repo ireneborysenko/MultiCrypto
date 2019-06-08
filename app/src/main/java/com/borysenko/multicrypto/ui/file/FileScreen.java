@@ -19,7 +19,7 @@ public interface FileScreen {
 
     interface Presenter {
 
-        void initWifi(FileActivity activity);
+        void initWifi();
 
         void beginDeviceDetectionButton();
 

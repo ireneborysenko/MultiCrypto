@@ -45,6 +45,7 @@ public class DetectionActivity extends AppCompatActivity implements DetectionScr
                 .detectionScreenModule(new DetectionScreenModule(this))
                 .contextModule(new ContextModule(this))
                 .build().inject(this);
+        mPresenter.initWifi();
     }
 
     @OnClick(R.id.main_begin_detection_button)
@@ -57,6 +58,11 @@ public class DetectionActivity extends AppCompatActivity implements DetectionScr
         return mMainDevicesListView;
     }
 
+    @Override
+    public void setConnectionNotification(String passedString) {
+        mMainHistory.setText(passedString);
+    }
+
     @OnClick(R.id.main_connect_button)
     void connectButtonClicked() {
         mPresenter.connectButton();
@@ -65,5 +71,16 @@ public class DetectionActivity extends AppCompatActivity implements DetectionScr
     @OnClick(R.id.main_send_button)
     void sendButtonClicked() {mPresenter.sendButton();}
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mPresenter.enableReceiver();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mPresenter.disableReceiver();
+    }
 
 }
