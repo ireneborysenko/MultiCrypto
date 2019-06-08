@@ -13,9 +13,20 @@ import com.borysenko.multicrypto.dagger.ContextModule;
 import com.borysenko.multicrypto.dagger.file.DaggerFileScreenComponent;
 import com.borysenko.multicrypto.dagger.file.FileScreenModule;
 import com.borysenko.multicrypto.db.CryptFile;
+import com.borysenko.multicrypto.proto.CBC;
+import com.borysenko.multicrypto.proto.GenerateParam;
+import com.borysenko.multicrypto.tools.FileExtensions;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Objects;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import javax.inject.Inject;
 
 import butterknife.BindView;
@@ -23,6 +34,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import static com.borysenko.multicrypto.tools.Constants.DECRYPTED_FILE;
+import static com.borysenko.multicrypto.tools.FileExtensions.writeFile;
 
 /**
  * Created by Android Studio.
@@ -66,6 +78,50 @@ public class FileActivity extends AppCompatActivity implements FileScreen.View{
         }
 
         mPresenter.initWifi();
+
+
+        GenerateParam.generateInitParameters(5);
+
+        String fileContent = null;
+        try {
+            fileContent = FileExtensions.openFile(file.getFilePath());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+//        encryptFile(fileContent, file.getFilePath());
+//        decryptFile(fileContent, file.getFilePath());
+
+    }
+
+    private void encryptFile(String fileContent, String s) {
+        try {
+            String encrypted;
+            String secretKey = GenerateParam.generateSymKey();
+            CBC cbc = new CBC(secretKey);
+            encrypted = cbc.encrypt(fileContent);
+            writeFile(s, encrypted);
+            FileExtensions.saveSymKey(s, secretKey, this);
+        } catch (InvalidAlgorithmParameterException | InvalidKeyException
+                | BadPaddingException | IllegalBlockSizeException
+                | UnsupportedEncodingException | NoSuchAlgorithmException | NoSuchPaddingException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void decryptFile(String fileContent, String s) {
+        try {
+            String decrypted;
+            String secretKey = FileExtensions.loadSymKey(s, this);
+            CBC cbc = new CBC(secretKey);
+            decrypted = cbc.decrypt(fileContent);
+            writeFile(s, decrypted);
+        } catch (InvalidAlgorithmParameterException | InvalidKeyException
+                | BadPaddingException | IllegalBlockSizeException
+                | UnsupportedEncodingException | NoSuchAlgorithmException | NoSuchPaddingException e) {
+            e.printStackTrace();
+        }
+
     }
 
     @Override

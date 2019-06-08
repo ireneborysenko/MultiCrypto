@@ -83,12 +83,16 @@ public class MainPresenter implements MainScreen.Presenter, DataBaseCallBack {
     @Override
     public void moveFileToFolder(Intent data) {
         Uri filepath = data.getData();
-        File from = new File(Extensions.getRealPathFromURI(mContext, filepath));
-        File to =
-                new File(Environment.getExternalStorageDirectory()
-                        + "/" + MAIN_FOLDER + "/" + from.getName());
-        from.renameTo(to);
-        dbManager.insertFile(new CryptFile(from.getName()), this);
+
+        File initialFile = new File(Extensions.getRealPathFromURI(mContext, filepath));
+
+        String destinationPath = Environment.getExternalStorageDirectory() + "/" + MAIN_FOLDER + "/"
+                + initialFile.getName();
+        File destinationFile = new File(destinationPath);
+
+        initialFile.renameTo(destinationFile);
+
+        dbManager.insertFile(new CryptFile(destinationPath, destinationFile.getName()), this);
     }
 
     @Override
