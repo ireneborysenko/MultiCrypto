@@ -1,6 +1,4 @@
-package com.borysenko.multicrypto.proto;
-
-import android.util.Log;
+package com.borysenko.multicrypto.crypto;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;
@@ -8,10 +6,9 @@ import java.security.SecureRandom;
 public class GenerateParam {
 
     public static void generateInitParameters(int N) {
-        int keysize = 1024;
-        Log.e("comehere","comehere");
-        final Dealer d = new Dealer(keysize);
-        d.generateKeys(N);
+        int keySize = 1024;
+        final Dealer dealer = new Dealer(keySize);
+        dealer.generateKeys(N);
     }
 
     public static String generateSymKey() {
@@ -20,7 +17,4 @@ public class GenerateParam {
         BigInteger key = BigInteger.probablePrime(keySize, random);
         return key.toString();
     }
-
-
-
 }

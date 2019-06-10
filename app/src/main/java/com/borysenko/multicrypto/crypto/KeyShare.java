@@ -1,4 +1,6 @@
-package com.borysenko.multicrypto.proto;
+package com.borysenko.multicrypto.crypto;
+
+import com.borysenko.multicrypto.tools.BigConst;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;
@@ -29,8 +31,6 @@ public class KeyShare {
 
     private static SecureRandom random;
 
-    private MessageDigest md;
-
     static {
         final byte[] randSeed = new byte[20];
         (new Random()).nextBytes(randSeed);
@@ -49,8 +49,8 @@ public class KeyShare {
      * @param delta  -
      *               N! (group size factorial)
      */
-    public KeyShare(final int id, final BigInteger secret, final BigInteger n,
-                    final BigInteger delta) {
+    KeyShare(final int id, final BigInteger secret, final BigInteger n,
+             final BigInteger delta) {
         this.id = id;
         this.secret = secret;
         this.verifier = null;
@@ -63,11 +63,11 @@ public class KeyShare {
         return id;
     }
 
-    public BigInteger getSecret() {
+    BigInteger getSecret() {
         return secret;
     }
 
-    public void setVerifiers(final BigInteger verifier, final BigInteger groupVerifier) {
+    void setVerifiers(final BigInteger verifier, final BigInteger groupVerifier) {
         this.verifier = verifier;
         this.groupVerifier = groupVerifier;
     }
@@ -80,49 +80,38 @@ public class KeyShare {
         return signVal;
     }
 
-    @Override
-    public String toString() {
-        return "KeyShare[" + id + "]";
-    }
-
     /**
      * Create a SigShare and a Verifier for byte[] b
      */
     public SigShare sign(final byte[] b) {
         final BigInteger x = (new BigInteger(b)).mod(n);
 
-        final int randbits = n.bitLength() + 3 * BigConst.L1;
+        final int randBits = n.bitLength() + 3 * BigConst.L1;
 
         // r \elt (0, 2^L(n)+3*l1)
-        final BigInteger r = (new BigInteger(randbits, random));
-        final BigInteger vprime = groupVerifier.modPow(r, n);
-        final BigInteger xtilde = x.modPow(BigConst.FOUR.multiply(delta), n);
-        final BigInteger xprime = xtilde.modPow(r, n);
+        final BigInteger r = (new BigInteger(randBits, random));
+        final BigInteger vPrime = groupVerifier.modPow(r, n);
+        final BigInteger xTilde = x.modPow(BigConst.FOUR.multiply(delta), n);
+        final BigInteger xPrime = xTilde.modPow(r, n);
 
         BigInteger c = null;
         BigInteger z = null;
         // Try to generate C and Z
         try {
-            md = MessageDigest.getInstance("SHA");
+            MessageDigest md = MessageDigest.getInstance("SHA");
             md.reset();
 
-            // debug("v: " + groupVerifier.mod(n));
             md.update(groupVerifier.mod(n).toByteArray());
 
-            // debug("xtilde: " + xtilde);
-            md.update(xtilde.toByteArray());
+            md.update(xTilde.toByteArray());
 
-            // debug("vi: " + verifier.mod(n));
             md.update(verifier.mod(n).toByteArray());
 
-            // debug("xi^2: " + x.modPow(signVal,n).modPow(TWO,n));
             md.update(x.modPow(signVal, n).modPow(BigConst.TWO, n).toByteArray());
 
-            // debug("v': "+ vprime);
-            md.update(vprime.toByteArray());
+            md.update(vPrime.toByteArray());
 
-            // debug("x': " + xprime);
-            md.update(xprime.toByteArray());
+            md.update(xPrime.toByteArray());
             c = new BigInteger(md.digest()).mod(n);
             z = (c.multiply(secret)).add(r);
         } catch (final java.security.NoSuchAlgorithmException e) {
@@ -132,9 +121,5 @@ public class KeyShare {
         final Verifier ver = new Verifier(z, c, verifier, groupVerifier);
 
         return new SigShare(this.id, x.modPow(signVal, n), ver);
-    }
-
-    private static void debug(final String s) {
-        System.err.println("KeyShare: " + s);
     }
 }

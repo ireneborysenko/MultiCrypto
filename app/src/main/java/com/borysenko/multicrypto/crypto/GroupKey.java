@@ -1,4 +1,4 @@
-package com.borysenko.multicrypto.proto;
+package com.borysenko.multicrypto.crypto;
 
 import java.math.BigInteger;
 
@@ -15,8 +15,8 @@ public class GroupKey {
      */
     private BigInteger n;
 
-    public GroupKey(final int k, final int N, final int keySize,
-                    final BigInteger v, final BigInteger e, final BigInteger n) {
+    GroupKey(final int k, final int N, final int keySize,
+             final BigInteger v, final BigInteger e, final BigInteger n) {
         this.k = k;
         this.N = N;
         this.e = e;

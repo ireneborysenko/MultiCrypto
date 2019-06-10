@@ -9,16 +9,14 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.borysenko.multicrypto.R;
+import com.borysenko.multicrypto.crypto.CryptoHelper;
 import com.borysenko.multicrypto.dagger.ContextModule;
 import com.borysenko.multicrypto.dagger.file.DaggerFileScreenComponent;
 import com.borysenko.multicrypto.dagger.file.FileScreenModule;
 import com.borysenko.multicrypto.db.CryptFile;
-import com.borysenko.multicrypto.proto.CBC;
-import com.borysenko.multicrypto.proto.GenerateParam;
-import com.borysenko.multicrypto.tools.FileExtensions;
+import com.borysenko.multicrypto.crypto.GenerateParam;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -34,7 +32,10 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import static com.borysenko.multicrypto.tools.Constants.DECRYPTED_FILE;
-import static com.borysenko.multicrypto.tools.FileExtensions.writeFile;
+import static com.borysenko.multicrypto.tools.Extensions.openFile;
+import static com.borysenko.multicrypto.tools.Extensions.writeFile;
+import static com.borysenko.multicrypto.tools.Extensions.saveSymKey;
+import static com.borysenko.multicrypto.tools.Extensions.loadSymKey;
 
 /**
  * Created by Android Studio.
@@ -84,13 +85,13 @@ public class FileActivity extends AppCompatActivity implements FileScreen.View{
 
         String fileContent = null;
         try {
-            fileContent = FileExtensions.openFile(file.getFilePath());
+            fileContent = openFile(file.getFilePath());
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-//        encryptFile(fileContent, file.getFilePath());
-//        decryptFile(fileContent, file.getFilePath());
+        encryptFile(fileContent, file.getFilePath());
+        decryptFile(fileContent, file.getFilePath());
 
     }
 
@@ -98,13 +99,13 @@ public class FileActivity extends AppCompatActivity implements FileScreen.View{
         try {
             String encrypted;
             String secretKey = GenerateParam.generateSymKey();
-            CBC cbc = new CBC(secretKey);
-            encrypted = cbc.encrypt(fileContent);
+            CryptoHelper cryptoHelper = new CryptoHelper(secretKey);
+            encrypted = cryptoHelper.encrypt(fileContent);
             writeFile(s, encrypted);
-            FileExtensions.saveSymKey(s, secretKey, this);
+            saveSymKey(s, secretKey, this);
         } catch (InvalidAlgorithmParameterException | InvalidKeyException
                 | BadPaddingException | IllegalBlockSizeException
-                | UnsupportedEncodingException | NoSuchAlgorithmException | NoSuchPaddingException e) {
+                | NoSuchAlgorithmException | NoSuchPaddingException e) {
             e.printStackTrace();
         }
     }
@@ -112,13 +113,13 @@ public class FileActivity extends AppCompatActivity implements FileScreen.View{
     private void decryptFile(String fileContent, String s) {
         try {
             String decrypted;
-            String secretKey = FileExtensions.loadSymKey(s, this);
-            CBC cbc = new CBC(secretKey);
-            decrypted = cbc.decrypt(fileContent);
+            String secretKey = loadSymKey(s, this);
+            CryptoHelper cryptoHelper = new CryptoHelper(secretKey);
+            decrypted = cryptoHelper.decrypt(fileContent);
             writeFile(s, decrypted);
         } catch (InvalidAlgorithmParameterException | InvalidKeyException
                 | BadPaddingException | IllegalBlockSizeException
-                | UnsupportedEncodingException | NoSuchAlgorithmException | NoSuchPaddingException e) {
+                | NoSuchAlgorithmException | NoSuchPaddingException e) {
             e.printStackTrace();
         }
 
