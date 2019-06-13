@@ -2,6 +2,7 @@ package com.borysenko.multicrypto.ui.file;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -9,14 +10,15 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.borysenko.multicrypto.R;
-import com.borysenko.multicrypto.crypto.CryptoHelper;
+import com.borysenko.multicrypto.crypto.CryptogHelper;
+import com.borysenko.multicrypto.cryptography.CryptoHelper;
 import com.borysenko.multicrypto.dagger.ContextModule;
 import com.borysenko.multicrypto.dagger.file.DaggerFileScreenComponent;
 import com.borysenko.multicrypto.dagger.file.FileScreenModule;
 import com.borysenko.multicrypto.db.CryptFile;
-import com.borysenko.multicrypto.crypto.GenerateParam;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -80,8 +82,17 @@ public class FileActivity extends AppCompatActivity implements FileScreen.View{
 
         mPresenter.initWifi();
 
+        CryptoHelper cryptoHelper = new CryptoHelper(5);
 
-        GenerateParam.generateInitParameters(5);
+        cryptoHelper.generateInitParams();
+        BigInteger symmetricKey =  cryptoHelper.generateSymKey();
+        Log.e("key", symmetricKey.toString());
+
+        BigInteger encryptedSymmetricKey = cryptoHelper.encrypt(symmetricKey);
+        Log.e("encr", encryptedSymmetricKey.toString());
+
+        BigInteger decryptedSymmetricKey = cryptoHelper.decrypt(encryptedSymmetricKey);
+        Log.e("decr", decryptedSymmetricKey.toString());
 
         String fileContent = null;
         try {
@@ -90,16 +101,17 @@ public class FileActivity extends AppCompatActivity implements FileScreen.View{
             e.printStackTrace();
         }
 
-        encryptFile(fileContent, file.getFilePath());
-        decryptFile(fileContent, file.getFilePath());
+//        encryptFile(fileContent, file.getFilePath());
+//        decryptFile(fileContent, file.getFilePath());
 
     }
 
-    private void encryptFile(String fileContent, String s) {
+
+    private void encryptFile(String secretKey, String fileContent, String s) {
         try {
             String encrypted;
-            String secretKey = GenerateParam.generateSymKey();
-            CryptoHelper cryptoHelper = new CryptoHelper(secretKey);
+
+            CryptogHelper cryptoHelper = new CryptogHelper(secretKey);
             encrypted = cryptoHelper.encrypt(fileContent);
             writeFile(s, encrypted);
             saveSymKey(s, secretKey, this);
@@ -114,7 +126,7 @@ public class FileActivity extends AppCompatActivity implements FileScreen.View{
         try {
             String decrypted;
             String secretKey = loadSymKey(s, this);
-            CryptoHelper cryptoHelper = new CryptoHelper(secretKey);
+            CryptogHelper cryptoHelper = new CryptogHelper(secretKey);
             decrypted = cryptoHelper.decrypt(fileContent);
             writeFile(s, decrypted);
         } catch (InvalidAlgorithmParameterException | InvalidKeyException
