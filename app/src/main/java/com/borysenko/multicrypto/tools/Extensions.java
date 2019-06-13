@@ -8,8 +8,6 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 
-import com.borysenko.multicrypto.crypto.SigShare;
-
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
@@ -40,28 +38,24 @@ public class Extensions {
         return result;
     }
 
-    public static BigInteger factorial(final int l) {
-        BigInteger x = BigInteger.valueOf(1L);
-        for (int i = 1; i <= l; i++)
-            x = x.multiply(BigInteger.valueOf(i));
-        return x;
+    public static BigInteger modInverse(BigInteger k, BigInteger prime)
+    {
+        k = k.mod(prime);
+        BigInteger r = (k.compareTo(BigInteger.ZERO) < 0) ? (gcdD(prime, k.negate())[2]).negate() : gcdD(prime,k)[2];
+        return prime.add(r).mod(prime);
     }
 
-    public static BigInteger lambda(final int ik, final SigShare[] S,
-                                     final BigInteger delta) {
-        // Compute lagarange interpolation points Reference
-        // lambda(id,l) = PI {id!=j, 0<j<=l} (i-j')/(id-j')
-        BigInteger value = delta;
-
-        for (final SigShare element : S)
-            if (element.getId() != ik)
-                value = value.multiply(BigInteger.valueOf(element.getId()));
-
-        for (final SigShare element : S)
-            if (element.getId() != ik)
-                value = value.divide(BigInteger.valueOf((element.getId() - ik)));
-
-        return value;
+    private static BigInteger[] gcdD(BigInteger a, BigInteger b)
+    {
+        if (b.compareTo(BigInteger.ZERO) == 0)
+            return new BigInteger[] {a, BigInteger.ONE, BigInteger.ZERO};
+        else
+        {
+            BigInteger n = a.divide(b);
+            BigInteger c = a.mod(b);
+            BigInteger[] r = gcdD(b, c);
+            return new BigInteger[] {r[0], r[2], r[1].subtract(r[2].multiply(n))};
+        }
     }
 
     public static String openFile(String filepath) throws IOException {

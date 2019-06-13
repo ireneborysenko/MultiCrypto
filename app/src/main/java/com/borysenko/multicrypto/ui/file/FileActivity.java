@@ -10,8 +10,8 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.borysenko.multicrypto.R;
-import com.borysenko.multicrypto.crypto.CryptogHelper;
-import com.borysenko.multicrypto.cryptography.CryptoHelper;
+import com.borysenko.multicrypto.crypto.AESCrypto;
+import com.borysenko.multicrypto.crypto.CryptoHelper;
 import com.borysenko.multicrypto.dagger.ContextModule;
 import com.borysenko.multicrypto.dagger.file.DaggerFileScreenComponent;
 import com.borysenko.multicrypto.dagger.file.FileScreenModule;
@@ -84,7 +84,11 @@ public class FileActivity extends AppCompatActivity implements FileScreen.View{
 
         CryptoHelper cryptoHelper = new CryptoHelper(5);
 
-        cryptoHelper.generateInitParams();
+        BigInteger privateKey = cryptoHelper.generateInitParams();
+        Log.e("private", privateKey.toString());
+
+        cryptoHelper.splitSharedKey(privateKey);
+
         BigInteger symmetricKey =  cryptoHelper.generateSymKey();
         Log.e("key", symmetricKey.toString());
 
@@ -111,8 +115,8 @@ public class FileActivity extends AppCompatActivity implements FileScreen.View{
         try {
             String encrypted;
 
-            CryptogHelper cryptoHelper = new CryptogHelper(secretKey);
-            encrypted = cryptoHelper.encrypt(fileContent);
+            AESCrypto aesCrypto = new AESCrypto(secretKey);
+            encrypted = aesCrypto.encrypt(fileContent);
             writeFile(s, encrypted);
             saveSymKey(s, secretKey, this);
         } catch (InvalidAlgorithmParameterException | InvalidKeyException
@@ -126,8 +130,8 @@ public class FileActivity extends AppCompatActivity implements FileScreen.View{
         try {
             String decrypted;
             String secretKey = loadSymKey(s, this);
-            CryptogHelper cryptoHelper = new CryptogHelper(secretKey);
-            decrypted = cryptoHelper.decrypt(fileContent);
+            AESCrypto aesCrypto = new AESCrypto(secretKey);
+            decrypted = aesCrypto.decrypt(fileContent);
             writeFile(s, decrypted);
         } catch (InvalidAlgorithmParameterException | InvalidKeyException
                 | BadPaddingException | IllegalBlockSizeException

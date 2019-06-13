@@ -1,4 +1,4 @@
-package com.borysenko.multicrypto.cryptography;
+package com.borysenko.multicrypto.crypto;
 
 import android.util.Base64;
 

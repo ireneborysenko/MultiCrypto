@@ -1,44 +1,47 @@
 package com.borysenko.multicrypto.crypto;
 
-import android.util.Base64;
+import java.math.BigInteger;
+import java.security.SecureRandom;
 
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.IvParameterSpec;
-import javax.crypto.spec.SecretKeySpec;
-
-import static com.borysenko.multicrypto.tools.BigConst.CHARSET;
-import static com.borysenko.multicrypto.tools.BigConst.CIPHER_MODE;
-import static com.borysenko.multicrypto.tools.BigConst.IV;
-
+/**
+ * Created by Android Studio.
+ * User: Iryna
+ * Date: 13/06/19
+ * Time: 11:27
+ */
 public class CryptoHelper {
 
-    private Cipher cipher;
-    private SecretKey keySpec;
-    private IvParameterSpec ivSpec;
+    private RSACrypto rsaCrypto;
+    private int numberOfDevices;
 
-    public CryptoHelper(String secretKey) throws NoSuchPaddingException, NoSuchAlgorithmException {
-        keySpec = new SecretKeySpec(secretKey.getBytes(CHARSET), "AES");
-        ivSpec = new IvParameterSpec(IV.getBytes(CHARSET));
-        cipher = Cipher.getInstance(CIPHER_MODE);
+    public CryptoHelper(int N) {
+        this.numberOfDevices = N;
+
     }
 
-    public String decrypt(String input) throws InvalidAlgorithmParameterException, InvalidKeyException,
-            BadPaddingException, IllegalBlockSizeException {
-        cipher.init(Cipher.DECRYPT_MODE, keySpec, ivSpec);
-        return new String(cipher.doFinal(Base64.decode(input, Base64.DEFAULT)));
+    public BigInteger generateInitParams() {
+        int keySize = 1024;
+        rsaCrypto = new RSACrypto(keySize);
+        return rsaCrypto.generateKeys(numberOfDevices);
+
     }
 
-    public String encrypt(String input) throws InvalidAlgorithmParameterException, InvalidKeyException,
-            BadPaddingException, IllegalBlockSizeException {
-        cipher.init(Cipher.ENCRYPT_MODE, keySpec, ivSpec);
-        return Base64.encodeToString(cipher.doFinal(input.getBytes(CHARSET)), Base64.DEFAULT);
+    public BigInteger encrypt(BigInteger symKey) {
+        return rsaCrypto.encrypt(symKey);
+    }
+
+    public BigInteger decrypt(BigInteger encSymKey) {
+        return rsaCrypto.decrypt(encSymKey);
+    }
+
+    public BigInteger generateSymKey() {
+        SecureRandom randomKey = new SecureRandom();
+        int keySize = 104;
+        return BigInteger.probablePrime(keySize, randomKey);
+    }
+
+    public void splitSharedKey(BigInteger privateKey) {
+        SecretShare[] shares = rsaCrypto.shareKey(privateKey);
+        rsaCrypto.recoverKey(shares);
     }
 }
